@@ -1,5 +1,6 @@
 ﻿using HelloWorld.Data;
 using System;
+using System.Configuration;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
@@ -12,18 +13,19 @@ namespace HelloWorldConsole
 
         private static void Main(string[] args)
         {
+            var apiUrl = ConfigurationManager.AppSettings["HelloWorld.Api.Url"];
+            client.BaseAddress = new Uri(apiUrl);
+            client.DefaultRequestHeaders.Accept.Clear();
+            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
             runAsync().Wait();
         }
 
         private static async Task runAsync()
         {
-            client.BaseAddress = new Uri("http://localhost:53526/");
-            client.DefaultRequestHeaders.Accept.Clear();
-            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-
             try
             {
-                // Get the product
+                // Get the message(? ;)
                 var apiMessage = await getApiMessageAsync(client.BaseAddress + "api/message");
                 showApiMessage(apiMessage);
             }
@@ -49,6 +51,5 @@ namespace HelloWorldConsole
         {
             Console.WriteLine($"Message from API: {apiMessage.Text}");
         }
-
     }
 }
